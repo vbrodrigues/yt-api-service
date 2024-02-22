@@ -15,6 +15,8 @@ const storage = new Storage();
 
 const rawVideoBucketName = "vbrodrigues-yt-raw-videos";
 
+const videoCollectionId = "videos";
+
 export const createUser = functions.auth.user().onCreate((user) => {
   const userInfo = {
     uid: user.uid,
@@ -52,4 +54,10 @@ export const generateUploadUrl = onCall({maxInstances: 1}, async (request) => {
   });
 
   return {url, fileName};
+});
+
+export const getVideos = onCall({maxInstances: 1}, async () => {
+  const snapshot = await firestore
+    .collection(videoCollectionId).limit(10).get();
+  return snapshot.docs.map((doc) => doc.data());
 });
